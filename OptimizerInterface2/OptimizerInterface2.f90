@@ -5,10 +5,11 @@ MODULE OptimizerInterface2
     IMPLICIT NONE
     
     ABSTRACT INTERFACE
-        TYPE(C_PTR) FUNCTION evaluatorCallback(length) &
+        TYPE(C_PTR) FUNCTION evaluatorCallback(length, aDouble) &
             BIND(C, name='evaluatorCallback')
             USE, INTRINSIC :: ISO_C_BINDING
             INTEGER(C_INT), INTENT(IN), VALUE :: length
+            REAL(C_DOUBLE), INTENT(IN), VALUE :: aDouble
         END FUNCTION
     END INTERFACE
 
@@ -27,10 +28,10 @@ MODULE OptimizerInterface2
         
         PROCEDURE(evaluatorCallback), POINTER :: convertedCallback    
         CALL C_F_PROCPOINTER (callback, convertedCallback)
-        
-        callbackResult = convertedCallback(20)
-        
-        print *, "Hello from Fortran!"
+    
+        PRINT *, "Hello from Fortran! calling the callback:"
+        callbackResult = convertedCallback(20, 3.05)
+    
         
     END SUBROUTINE
 

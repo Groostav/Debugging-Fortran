@@ -3,7 +3,7 @@
 
 using namespace std;
 
-typedef double (*PointEvaluator)(int);
+typedef double (*PointEvaluator)(int, double);
 
 extern "C"{
 	//oh nifty, VS generates this like its documentation...
@@ -16,6 +16,19 @@ extern "C"{
 int main()
 {
 	cout << "running!" << endl;
+	cout << 
+#if _M_AMD64
+	"is _M_AMD64, "
+#else
+	"is not _M_AMD64, "
+#endif
+	<<
+#if _WIN64
+	"is _WIN64"
+#else 
+	"is not _WIN64"
+#endif
+	<< endl;
 	system("PAUSE");
 
 	cout << "passing in a boolean: FORTRAN{" << endl;
@@ -24,9 +37,10 @@ int main()
 	cout << "}" << endl;
 	system("PAUSE");
 
-    PointEvaluator eval = [](int nCoords) -> double { 
+    PointEvaluator eval = [](int integer, double aDouble) -> double { 
 		cout << "hello again from C++!" << endl;
-		cout << "the C++ got the value " << nCoords << " for its input!" << endl;
+		cout << "got integer:" << integer << "!!" << endl;
+		cout << "got double:" << aDouble << "!!" << endl;
 		return 0;
 	};
 
