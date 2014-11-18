@@ -3,32 +3,40 @@
 
 using namespace std;
 
-typedef double (*PointEvaluator)(int, double);
-
 extern "C"{
+
+	typedef double (*NumEvaluator)(int, double);
+	typedef double (*ArrayEvaluator)(int, double, double*);
+
 	//oh nifty, VS generates this like its documentation...
 	void pauseOptimization(bool*);
 
 	//callback is (double*, int) -> double*
-	void acceptCallback(PointEvaluator);
+	void acceptCallback(NumEvaluator);
+
+	void acceptArrayCallback(ArrayEvaluator);
 }
 
 int main()
 {
 	cout << "running!" << endl;
-	cout << 
-#if _M_AMD64
-	"is _M_AMD64, "
-#else
-	"is not _M_AMD64, "
-#endif
-	<<
-#if _WIN64
-	"is _WIN64"
-#else 
-	"is not _WIN64"
-#endif
-	<< endl;
+	cout 
+		#if _M_IX86
+		<< "is _M_IX86, "
+		#else
+		<< "is not _M_IX86"
+		#endif
+		#if _M_AMD64 
+			<< "and is _M_AMD64, "
+		#else
+			<< "and is NOT _M_AMD64, "
+		#endif	
+		#if _WIN64
+			<< "and is _WIN64"
+		#else 
+			<< "and is NOT _WIN64"
+		#endif
+			<< endl;
 	system("PAUSE");
 
 	cout << "passing in a boolean: FORTRAN{" << endl;
@@ -37,16 +45,30 @@ int main()
 	cout << "}" << endl;
 	system("PAUSE");
 
-    PointEvaluator eval = [](int integer, double aDouble) -> double { 
+	
+	cout << "passing in a func ptr! FORTRAN{" << endl;
+	acceptCallback([](int integer, double aDouble) -> double { 
 		cout << "hello again from C++!" << endl;
 		cout << "got integer:" << integer << "!!" << endl;
 		cout << "got double:" << aDouble << "!!" << endl;
-		return 0;
-	};
+		return 42;
+	});
+	cout << "}" << endl;
+	system("PAUSE");
 
-	cout << "passing in a func ptr! FOTRAN{" << endl;
-	acceptCallback(eval);
+	cout << "passing in a func ptr that takes an array! FORTRAN{ " << endl;
+	acceptArrayCallback([](int integer, double aDouble, double* doubleArray) -> double {
+		cout << "hello again from C++!" << endl;
+		cout << "got integer:" << integer << "!!" << endl;
+		cout << "got double:" << aDouble << "!!" << endl;
+		cout << "got doubleArray: 0x" << doubleArray << " {" 
+			<< doubleArray[0] << "," 
+			<< doubleArray[1] << "..." 
+			<< "}" << "!!" << endl;
+		return 42;
+	});
 	cout << "}" << endl;
 
+	cout << "Done!!!" << endl;
 	system("PAUSE");
 }

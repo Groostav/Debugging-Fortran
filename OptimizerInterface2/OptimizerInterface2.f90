@@ -1,38 +1,69 @@
-MODULE OptimizerInterface2
-    USE ISO_C_BINDING
-    USE ISO_FORTRAN_ENV
+module OptimizerInterface2
+    use ISO_C_BINDING
+    use ISO_FORTRAN_ENV
 
-    IMPLICIT NONE
+    implicit none
     
-    ABSTRACT INTERFACE
-        TYPE(C_PTR) FUNCTION evaluatorCallback(length, aDouble) &
-            BIND(C, name='evaluatorCallback')
-            USE, INTRINSIC :: ISO_C_BINDING
-            INTEGER(C_INT), INTENT(IN), VALUE :: length
-            REAL(C_DOUBLE), INTENT(IN), VALUE :: aDouble
-        END FUNCTION
-    END INTERFACE
+    abstract interface
+        real(C_DOUBLE) function NumEvaluator(length, aDouble) &
+            bind(C, name='NumEvaluator')
+            use, intrinsic :: ISO_C_BINDING
+            integer(C_INT), intent(in), value :: length
+            real(C_DOUBLE), intent(in), value :: aDouble
+        end function
+    end interface
 
-    CONTAINS
+        
+    abstract interface
+        real(C_DOUBLE) function ArrayEvaluator(length, aDouble, doubleArray) &
+            bind(C, name='ArrayEvaluator')
+            use, intrinsic :: ISO_C_BINDING
+            integer(C_INT), intent(in), value :: length
+            real(C_DOUBLE), intent(in), value :: aDouble
+            real(C_DOUBLE), intent(in), dimension(*) :: doubleArray
+            !by default fortran seems to do by-reference
+        end function
+    end interface
     
-    SUBROUTINE pauseOptimization(meh) BIND(C, name="pauseOptimization")
+    contains
+    
+    subroutine pauseOptimization(meh) bind(C, name="pauseOptimization")
     !DEC$ ATTRIBUTES DLLEXPORT :: pauseOptimization
-    LOGICAL(C_BOOL),INTENT(IN) :: meh
-        PRINT *,meh
-    END SUBROUTINE
+    logical(C_BOOL), intent(in) :: meh
+        print *,meh
+    end subroutine
     
-    SUBROUTINE acceptCallback(callback) BIND(C,name="acceptCallback")
+    subroutine acceptCallback(callback) bind(C,name="acceptCallback")
     !DEC$ ATTRIBUTES DLLEXPORT :: acceptCallback
-    TYPE(C_FUNPTR), VALUE :: callback
-        TYPE(C_PTR) :: callbackResult
+    type(C_FUNPTR), value :: callback
+        real(C_DOUBLE) :: callbackResult
         
-        PROCEDURE(evaluatorCallback), POINTER :: convertedCallback    
-        CALL C_F_PROCPOINTER (callback, convertedCallback)
+        procedure(NumEvaluator), POINTER :: convertedCallback    
+        call C_F_PROCPOINTER (callback, convertedCallback)
     
-        PRINT *, "Hello from Fortran! calling the callback:"
+        print *, "Hello from Fortran! calling the callback:"
         callbackResult = convertedCallback(20, 3.05)
+        print *, "Fortran again: got the result ", callbackResult
+            
+    end subroutine
     
+    subroutine acceptArrayCallback(callback) bind(C,name="acceptArrayCallback")
+    !DEC$ ATTRIBUTES DLLEXPORT :: acceptArrayCallback
+    type(C_FUNPTR), value :: callback
+        real(C_DOUBLE) :: callbackResult
         
-    END SUBROUTINE
+        real(C_DOUBLE), dimension (0:4) :: dArray
+        procedure(ArrayEvaluator), POINTER :: convertedCallback    
+        
+        dArray(1) = 42.0
+        
+        call C_F_PROCPOINTER (callback, convertedCallback)
+    
+        print *, "Hello from Fortran! calling the callback:"
+        callbackResult = convertedCallback(20, 3.05, dArray);
+        print *, "Fortran again: got the result ", callbackResult
+            
+    end subroutine
 
-END MODULE OptimizerInterface2
+
+end module OptimizerInterface2
