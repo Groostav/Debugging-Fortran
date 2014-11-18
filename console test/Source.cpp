@@ -3,14 +3,14 @@
 
 using namespace std;
 
-typedef double* (*PointEvaluator)(double*, int);
+typedef double (*PointEvaluator)(int);
 
 extern "C"{
 	//oh nifty, VS generates this like its documentation...
 	void pauseOptimization(bool*);
 
 	//callback is (double*, int) -> double*
-	void acceptCallback(bool, PointEvaluator);
+	void acceptCallback(PointEvaluator);
 }
 
 int main()
@@ -24,11 +24,14 @@ int main()
 	cout << "}" << endl;
 	system("PAUSE");
 
-	cout << "passing in a boolean and a NULL func ptr! FOTRAN{" << endl;
-	acceptCallback(true, [](double* point, int nCoords) -> double* { 
+    PointEvaluator eval = [](int nCoords) -> double { 
 		cout << "hello again from C++!" << endl;
-		return NULL;
-	});
+		cout << "the C++ got the value " << nCoords << " for its input!" << endl;
+		return 0;
+	};
+
+	cout << "passing in a func ptr! FOTRAN{" << endl;
+	acceptCallback(eval);
 	cout << "}" << endl;
 
 	system("PAUSE");

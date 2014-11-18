@@ -5,10 +5,9 @@ MODULE OptimizerInterface2
     IMPLICIT NONE
     
     ABSTRACT INTERFACE
-        TYPE(C_PTR) FUNCTION evaluatorCallback(inputVector, length)&
+        TYPE(C_PTR) FUNCTION evaluatorCallback(length) &
             BIND(C, name='evaluatorCallback')
             USE, INTRINSIC :: ISO_C_BINDING
-            TYPE(C_PTR), INTENT(IN), VALUE :: inputVector
             INTEGER(C_INT), INTENT(IN), VALUE :: length
         END FUNCTION
     END INTERFACE
@@ -21,12 +20,18 @@ MODULE OptimizerInterface2
         PRINT *,meh
     END SUBROUTINE
     
-    SUBROUTINE acceptCallback(boolean, callback) BIND(C,name="acceptCallback")
+    SUBROUTINE acceptCallback(callback) BIND(C,name="acceptCallback")
     !DEC$ ATTRIBUTES DLLEXPORT :: acceptCallback
-    LOGICAL(C_BOOL),INTENT(IN) :: boolean
-    PROCEDURE(evaluatorCallback), POINTER :: callback
-        CALL callback
-        PRINT *,boolean
+    TYPE(C_FUNPTR), VALUE :: callback
+        TYPE(C_PTR) :: callbackResult
+        
+        PROCEDURE(evaluatorCallback), POINTER :: convertedCallback    
+        CALL C_F_PROCPOINTER (callback, convertedCallback)
+        
+        callbackResult = convertedCallback(20)
+        
+        print *, "Hello from Fortran!"
+        
     END SUBROUTINE
 
 END MODULE OptimizerInterface2
