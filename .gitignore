@@ -1,3 +1,7 @@
+#intelliJ files
+.idea/misc.xml
+.idea/workspace.xml
+
 # Compiled Object files
 *.slo
 *.lo
