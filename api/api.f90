@@ -25,6 +25,11 @@ module api
         end function
     end interface
     
+    TYPE, BIND(C) :: SomeStruct
+        INTEGER(C_INT) :: someInt
+        REAL(C_DOUBLE) :: someDouble
+    END TYPE
+    
     contains
     
     subroutine pauseOptimization(meh) bind(C, name="pauseOptimization")
@@ -47,13 +52,17 @@ module api
             
     end subroutine
     
-    subroutine acceptArrayCallback(callback) bind(C,name="acceptArrayCallback")
+    subroutine acceptArrayCallback(callback,inStruct) bind(C,name="acceptArrayCallback")
     !DEC$ ATTRIBUTES DLLEXPORT :: acceptArrayCallback
-    type(C_FUNPTR), value :: callback
+        type(C_FUNPTR), value :: callback
+        type(SomeStruct),value :: inStruct
         real(C_DOUBLE) :: callbackResult
         
         real(C_DOUBLE), dimension (0:4) :: dArray
         procedure(ArrayEvaluator), POINTER :: convertedCallback    
+        
+        print *,inStruct%someInt
+        print *,inStruct%someDouble
         
         dArray(1) = 42.0
         

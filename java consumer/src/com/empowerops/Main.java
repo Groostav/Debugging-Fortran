@@ -35,7 +35,7 @@ public class Main {
     public interface api extends Library{
         void pauseOptimization(boolean meh);
         void acceptCallback(NumEvaluator evaluator);
-        void acceptArrayCallback(ArrayEvaluator evaluator);
+        void acceptArrayCallback(ArrayEvaluator evaluator,SomeStruct someStruct);
     }
 
 
@@ -44,9 +44,13 @@ public class Main {
         api api = resolveAPI();
 
         out.println("os.arch:" + System.getProperty("os.arch"));
+        
+        SomeStruct someStruct = new SomeStruct();
+        someStruct.someInt = 5;
+        someStruct.someDouble = 25.48;
 
         out.println("Java, calling fortran now: FORTRAN{");
-        api.acceptArrayCallback(Main::doCallback);
+        api.acceptArrayCallback(Main::doCallback,someStruct);
         out.println("}");
     }
 
@@ -59,7 +63,7 @@ public class Main {
     }
 
     private static api resolveAPI() {
-        Path path = Paths.get(".").toAbsolutePath().getParent().getParent().resolve("Debug").resolve("api.dll").toAbsolutePath();
+        Path path = Paths.get(".").toAbsolutePath().getParent().getParent().resolve("api").resolve("Release").resolve("api.dll").toAbsolutePath();
 
         String fullyQualifiedPath = path.toUri().getPath();
 
