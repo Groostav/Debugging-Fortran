@@ -9,6 +9,9 @@ import static java.lang.System.out;
 
 public class Main {
 
+    public static final Path PathToDll = Paths.get(".").toAbsolutePath().getParent().getParent().resolve("Debug").resolve("api.dll").toAbsolutePath();
+//    public static final Path PathToDll = Paths.get(".").toAbsolutePath().getParent().getParent().resolve("api").resolve("Release").resolve("api.dll").toAbsolutePath();
+
     public static class Pointer<TPointedAt extends Number> extends PointerType {
 
         public Pointer() {}
@@ -50,7 +53,7 @@ public class Main {
         someStruct.someDouble = 25.48;
 
         out.println("Java, calling fortran now: FORTRAN{");
-        api.acceptArrayCallback(Main::doCallback,someStruct);
+        api.acceptArrayCallback(Main::doCallback, someStruct);
         out.println("}");
     }
 
@@ -63,9 +66,8 @@ public class Main {
     }
 
     private static api resolveAPI() {
-        Path path = Paths.get(".").toAbsolutePath().getParent().getParent().resolve("api").resolve("Release").resolve("api.dll").toAbsolutePath();
 
-        String fullyQualifiedPath = path.toUri().getPath();
+        String fullyQualifiedPath = PathToDll.toUri().getPath();
 
         String parentFolder = fullyQualifiedPath.substring(0, fullyQualifiedPath.lastIndexOf("/"));
         String fileName = fullyQualifiedPath.substring(fullyQualifiedPath.lastIndexOf("/") +1, fullyQualifiedPath.length()).split("\\.")[0];

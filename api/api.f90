@@ -52,23 +52,23 @@ module api
             
     end subroutine
     
-    subroutine acceptArrayCallback(callback,inStruct) bind(C,name="acceptArrayCallback")
+    subroutine acceptArrayCallback(callback, inStruct) bind(C,name="acceptArrayCallback")
     !DEC$ ATTRIBUTES DLLEXPORT :: acceptArrayCallback
         type(C_FUNPTR), value :: callback
-        type(SomeStruct),value :: inStruct
+        type(SomeStruct) :: inStruct
         real(C_DOUBLE) :: callbackResult
         
         real(C_DOUBLE), dimension (0:4) :: dArray
         procedure(ArrayEvaluator), POINTER :: convertedCallback    
-        
-        print *,inStruct%someInt
-        print *,inStruct%someDouble
+    
+        print *, "Hello from Fortran!"
+        print *, "got inStruct%someInt: ", inStruct%someInt
+        print *, "got inStruct%someDouble: ", inStruct%someDouble
         
         dArray(1) = 42.0
         
         call C_F_PROCPOINTER (callback, convertedCallback)
-    
-        print *, "Hello from Fortran! calling the callback:"
+        print *, "calling the callback:"
         callbackResult = convertedCallback(20, 3.05, dArray);
         print *, "Fortran again: got the result ", callbackResult
             

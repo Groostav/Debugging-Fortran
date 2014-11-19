@@ -1,6 +1,8 @@
 #intelliJ files
-.idea/misc.xml
-.idea/workspace.xml
+java consumer/.idea/misc.xml
+java consumer/.idea/workspace.xml
+
+console test/Debug/*
 
 # Compiled Object files
 *.slo
