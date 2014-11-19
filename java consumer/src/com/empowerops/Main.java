@@ -46,22 +46,22 @@ public class Main {
 
         api api = resolveAPI();
 
-        out.println("os.arch:" + System.getProperty("os.arch"));
+        out.println("java: os.arch is " + System.getProperty("os.arch"));
         
         SomeStruct someStruct = new SomeStruct();
         someStruct.someInt = 5;
         someStruct.someDouble = 25.48;
 
-        out.println("Java, calling fortran now: FORTRAN{");
+        out.println("java: calling fortran now: FORTRAN{");
         api.acceptArrayCallback(Main::doCallback, someStruct);
-        out.println("}");
+        out.println("java: call to fortran to accept callback finished.");
     }
 
     public static double doCallback(int length, double aDouble, Pointer<Double> doubleArray){
-        out.println("hello again from java, things seem to be working OK over here on " + System.getProperty("os.arch"));
-        out.println("got length:" + length);
-        out.println("got aDouble:" + aDouble);
-        out.println("got doubleArray: " + doubleArray + " { " + doubleArray.asDoubleArray(2)[0] + ", " + doubleArray.asDoubleArray(2)[1] + "...}");
+        out.println("java: hello again from java, things seem to be working OK over here on " + System.getProperty("os.arch"));
+        out.println("java: got length:" + length);
+        out.println("java: got aDouble:" + aDouble);
+        out.println("java: got doubleArray: " + doubleArray + " { " + doubleArray.asDoubleArray(2)[0] + ", " + doubleArray.asDoubleArray(2)[1] + "...}");
         return 42;
     }
 

@@ -28,50 +28,49 @@ extern "C"{
 
 int main()
 {
-	cout << "running!" << endl;
-	cout 
+	cout << "c++: running... "
 		#if _M_IX86
-		<< "is _M_IX86, "
+		<< "is IX86, "
 		#else
-		<< "is not _M_IX86"
+		<< "is not IX86"
 		#endif
 		#if _M_AMD64 
-			<< "and is _M_AMD64, "
+			<< "and is AMD64, "
 		#else
-			<< "and is NOT _M_AMD64, "
+			<< "and is NOT AMD64, "
 		#endif	
 		#if _WIN64
-			<< "and is _WIN64"
+			<< "and is WIN64"
 		#else 
-			<< "and is NOT _WIN64"
+			<< "and is NOT WIN64"
 		#endif
 			<< endl;
 	system("PAUSE");
 
-	cout << "passing in a boolean: FORTRAN{" << endl;
+	cout << "c++: passing in a boolean: " << endl;
 	bool aBool = true;
 	pauseOptimization(&aBool);
-	cout << "}" << endl;
+	cout << "c++: fortran code has returned." << endl;
 	system("PAUSE");
 
 	
-	cout << "passing in a func ptr! FORTRAN{" << endl;
+	cout << "c++: passing in a func ptr! " << endl;
 	acceptCallback([](int integer, double aDouble) -> double { 
-		cout << "hello again from C++!" << endl;
-		cout << "got integer:" << integer << "!!" << endl;
-		cout << "got double:" << aDouble << "!!" << endl;
+		cout << "c++: hello again from C++!" << endl;
+		cout << "c++: got integer:" << integer << "!!" << endl;
+		cout << "c++: got double:" << aDouble << "!!" << endl;
 		return 42;
 	});
-	cout << "}" << endl;
+	cout << "c++: fortran code has returned." << endl;
 	system("PAUSE");
 
-	cout << "building parameter objects..." << endl;
+	cout << "c++: building parameter objects..." << endl;
 	ArrayEvaluator arrayEval = [](int integer, double aDouble, double* doubleArray) -> double {
-		cout << "hello again from C++!" << endl;
-		cout << "got integer:" << integer << "!!" << endl;
-		cout << "got double:" << aDouble << "!!" << endl;
-		cout << "got doubleArray: 0x" << doubleArray << " {" 
-			<< doubleArray[0] << "," 
+		cout << "c++: hello again from C++!" << endl;
+		cout << "c++: got integer:" << integer << "!!" << endl;
+		cout << "c++: got double:" << aDouble << "!!" << endl;
+		cout << "c++: got doubleArray: 0x" << doubleArray << " {" 
+			<< doubleArray[0] << ", " 
 			<< doubleArray[1] << "..." 
 			<< "}" << "!!" << endl;
 		return 42;
@@ -79,9 +78,9 @@ int main()
 	SomeStruct* someStruct = new SomeStruct();
 	someStruct->someInt = 10;
 	someStruct->someDouble = 20.0;
-	cout << "passing in a func ptr that takes an array! FORTRAN{ " << endl;
+	cout << "c++: passing in a func ptr that takes an array! FORTRAN{ " << endl;
 	acceptArrayCallback(arrayEval, someStruct);
-	cout << "}" << endl;
+	cout << "c++: fortran code returned" << endl;
 
 	cout << "Done!!!" << endl;
 	system("PAUSE");
